@@ -1,21 +1,88 @@
-try:
-    # Amount of water
-    water = int(input("Write how many ml of water the coffee machine has:"))
-    # Amount of milk
-    milk = int(input("Write how many ml of milk the coffee machine has:"))
-    # Amount of coffee beans
-    coffee = int(input("Write how many grams of coffee beans the coffee machine has:"))
-    # Number of Coffee drinks
-    num = int(input("Write how many cups of coffee you will need:"))
-    print(f"For {num} cups of coffee you will need:")
-    total_cups = min(water // 200, milk // 50, coffee // 15)
-    extra_cups = total_cups - num
-    if total_cups >= num:
-        if extra_cups:
-            print(f"Yes, I can make that amount of coffee (and even {extra_cups} more than that)")
+class InsufficientIngredients(Exception):
+    pass
+
+class CoffeeMachine:
+    coffees = {
+        'espresso': {
+            'water': 250,
+            'milk': 0,
+            'beans': 16,
+            'cost': 4
+        },
+        'latte': {
+            'water': 350,
+            'milk': 75,
+            'beans': 20,
+            'cost': 7
+        },
+        'cappuccino': {
+            'water': 200,
+            'milk': 100,
+            'beans': 12,
+            'cost': 6
+        },
+    }
+    def __init__(self, water:int = 0, milk:int = 0, beans:int = 0, cups:int = 0, money:int = 0):
+        self.water:int = water
+        self.milk:int = milk
+        self.beans:int = beans
+        self.cups:int = cups
+        self.money:int = money
+
+    def show_state(self):
+        print("The coffee machine has:")
+        print(f"{self.water} of water")
+        print(f"{self.milk} of milk")
+        print(f"{self.beans} of coffee beans")
+        print(f"{self.cups} of disposable cups")
+        print(f"{self.money} of money")
+
+    def buy(self, coffee: str):
+        amount = self.coffees[coffee]
+        if self.cups >= 1 and self.water >= amount['water'] and self.beans >= amount['beans'] and self.milk >= amount['milk']:
+            self.cups -= 1
+            self.money += amount['cost']
+            self.beans -= amount['beans']
+            self.water -= amount['water']
+            self.milk -= amount['milk']
         else:
-            print("Yes, I can make that amount of coffee")
-    else:
-        print(f"No, I can make only {total_cups} cups of coffee")
+            raise InsufficientIngredients
+
+    def fill(self, water, milk, beans, cups):
+        self.water += water
+        self.milk += milk
+        self.beans += beans
+        self.cups += cups
+
+    def take(self):
+        print(f"I gave you ${self.money}")
+        self.money = 0
+
+# Initial Conditions
+water:int = 400
+milk:int = 540
+beans:int = 120
+cups:int = 9
+money:int = 550
+coffeemachine = CoffeeMachine(water, milk, beans, cups, money)
+try:
+    coffeemachine.show_state()
+    command = input("Write action (buy, fill, take):")
+    if command == 'buy':
+        choice = int(input("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino:"))
+        coffeemachine.buy(['espresso', 'latte', 'cappuccino'][choice-1])
+    elif command == 'fill':
+        # Amount of water
+        water = int(input("Write how many ml of water do you want to add:"))
+        # Amount of milk
+        milk = int(input("Write how many ml of milk do you want to add:"))
+        # Amount of coffee beans
+        beans = int(input("Write how many grams of coffee beans do you want to add:"))
+        # Amount of cups
+        cups = int(input("Write how many disposable cups of coffee do you want to add:"))
+        coffeemachine.fill(water, milk, beans, cups)
+    elif command == 'take':
+        coffeemachine.take()
+    coffeemachine.show_state()
 except ValueError:
     print('Enter a Number')
