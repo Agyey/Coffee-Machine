@@ -45,8 +45,21 @@ class CoffeeMachine:
             self.beans -= amount['beans']
             self.water -= amount['water']
             self.milk -= amount['milk']
+            print('I have enough resources, making you a coffee!')
         else:
-            raise InsufficientIngredients
+            sorry_message = "Sorry, not enough "
+            missing_ingredients = []
+            if self.water < amount['water']:
+                missing_ingredients.append('water')
+            if self.beans < amount['beans']:
+                missing_ingredients.append('beans')
+            if self.milk < amount['milk']:
+                missing_ingredients.append('milk')
+            if self.cups < 1:
+                missing_ingredients.append('cups')
+            sorry_message += ", ".join(missing_ingredients) + '!'
+            print(sorry_message)
+
 
     def fill(self, water, milk, beans, cups):
         self.water += water
@@ -55,7 +68,7 @@ class CoffeeMachine:
         self.cups += cups
 
     def take(self):
-        print(f"I gave you ${self.money}")
+        print(f"\nI gave you ${self.money}")
         self.money = 0
 
 # Initial Conditions
@@ -65,24 +78,31 @@ beans:int = 120
 cups:int = 9
 money:int = 550
 coffeemachine = CoffeeMachine(water, milk, beans, cups, money)
-try:
-    coffeemachine.show_state()
-    command = input("Write action (buy, fill, take):")
-    if command == 'buy':
-        choice = int(input("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino:"))
-        coffeemachine.buy(['espresso', 'latte', 'cappuccino'][choice-1])
-    elif command == 'fill':
-        # Amount of water
-        water = int(input("Write how many ml of water do you want to add:"))
-        # Amount of milk
-        milk = int(input("Write how many ml of milk do you want to add:"))
-        # Amount of coffee beans
-        beans = int(input("Write how many grams of coffee beans do you want to add:"))
-        # Amount of cups
-        cups = int(input("Write how many disposable cups of coffee do you want to add:"))
-        coffeemachine.fill(water, milk, beans, cups)
-    elif command == 'take':
-        coffeemachine.take()
-    coffeemachine.show_state()
-except ValueError:
-    print('Enter a Number')
+while True:
+    try:
+        command = input("Write action (buy, fill, take, remaining, exit):")
+        if command == 'remaining':
+            coffeemachine.show_state()
+        elif command == 'buy':
+            choice = input("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu:")
+            if choice == 'back':
+                continue
+            else:
+                choice = int(choice)
+            coffeemachine.buy(['espresso', 'latte', 'cappuccino'][choice-1])
+        elif command == 'fill':
+            # Amount of water
+            water = int(input("Write how many ml of water do you want to add:"))
+            # Amount of milk
+            milk = int(input("Write how many ml of milk do you want to add:"))
+            # Amount of coffee beans
+            beans = int(input("Write how many grams of coffee beans do you want to add:"))
+            # Amount of cups
+            cups = int(input("Write how many disposable cups of coffee do you want to add:"))
+            coffeemachine.fill(water, milk, beans, cups)
+        elif command == 'take':
+            coffeemachine.take()
+        elif command == 'exit':
+            break
+    except ValueError:
+        print('Enter a Number')
