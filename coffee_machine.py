@@ -1,9 +1,9 @@
-steps = """Starting to make a coffee
-Grinding coffee beans
-Boiling water
-Mixing boiled water with crushed coffee beans
-Pouring coffee into the cup
-Pouring some milk into the cup
-Coffee is ready!"""
-
-print(steps)
+# Number of Coffee drinks
+try:
+    num = int(input("Write how many cups of coffee you will need:"))
+    print(f"For {num} cups of coffee you will need:")
+    print(f"{num*200} ml of water")
+    print(f"{num*50} ml of milk")
+    print(f"{num*15} g of coffee beans")
+except ValueError:
+    print('Enter a Number')
